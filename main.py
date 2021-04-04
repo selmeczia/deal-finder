@@ -1,12 +1,14 @@
 # print("initial commit")
 
+from module import *
 
-# TODO: load inputs
-# TODO: iterate over input links
-# TODO: find prices of products
-# TODO: add extra values if available (avaliability, free shipping, discounted)
-# TODO: create database for the scraped data
-# TODO: remove unnecessary data (look for old project)
-# TODO: deal trigger
-# TODO: notification for deal trigger
-# TODO: automated run
+
+config_path = "config/"
+product_group_input = config_path + "product_group_input.csv"
+chromedriver = "C:\Program Files (x86)\chromedriver.exe"
+
+DealFinder(product_group_input, chromedriver).task_scheduler()
+
+#browser = webdriver.Chrome(chromedriver)
+#browser.get("https://ipon.hu/shop/csoport/szamitogep-alkatresz/videokartya?price=23790-299790&sortOrder=olcso&page=1")
+#print(browser.title)
