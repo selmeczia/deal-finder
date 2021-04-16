@@ -75,7 +75,7 @@ class DealFinder:
                     except:
                         continue
 
-        print(notification)
+        return notification
 
     def save_df(self, df):
 
