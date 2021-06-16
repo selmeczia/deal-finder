@@ -64,7 +64,7 @@ class DealFinder:
         for index, row in rules_df.iterrows():
             if row["file"] == self.current_run_type:
                 if row["rule"] == "avaliability":
-                    if row["item"] in to_scan["Title"]: notification.append(row["item"] + " is avaliable")
+                    if not to_scan[to_scan["Title no spaces"].str.contains(str(row["item"]))].empty: notification.append(row["item"] + " is avaliable")
                 if "<" in row["rule"]:
                     price_rule = int(row["rule"][1:])
                     items_found = to_scan[to_scan["Title no spaces"].str.contains(str(row["item"]))]
@@ -74,8 +74,8 @@ class DealFinder:
                                 notification.append(item_row["Title"] + " is avaliable at price: " + str(item_row["Price"]))
                     except:
                         continue
-
-        return notification
+        if notification:
+            print(notification)
 
     def save_df(self, df):
 
@@ -135,6 +135,8 @@ class DealFinder:
 
         print("Scraping done")
         return product_dict
+
+
 
 # TODO: add extra values if available (avaliability, free shipping, discounted)
 # TODO: deal trigger
