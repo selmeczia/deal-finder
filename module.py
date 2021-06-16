@@ -96,6 +96,13 @@ class DealFinder:
                 self.save_df(current_df_processed)
                 self.rule_checker(current_df_processed)
 
+            if current_store == "Emag":
+                current_scrape = self.scrape_Emag_group(current_link)
+                current_df_raw = self.df_creation(current_scrape, current_store)
+                current_df_processed = self.duplicate_removal(current_df_raw)
+                self.save_df(current_df_processed)
+                self.rule_checker(current_df_processed)
+
     def scrape_Ipon_group(self, link):
 
         browser = webdriver.Chrome(self.chromedriver)
@@ -133,10 +140,63 @@ class DealFinder:
                 price_int = int(price_element.split(' Ft')[0].replace(' ', ''))
                 product_dict[title_element] = [price_int, timestamp]
 
+        browser.close()
         print("Scraping done")
         return product_dict
 
+    def scrape_Emag_group(self, link):
 
+        browser = webdriver.Chrome(self.chromedriver)
+        browser.get(link)
+
+        # while True:
+        #     time.sleep(2)
+        #     next_page_btn = browser.find_elements_by_class_name("js-change-page")
+        #     if len(next_page_btn) < 1:
+        #         print("All pages loaded")
+        #         break
+        #     else:
+        #         WebDriverWait(browser, 10) \
+        #             .until(EC.element_to_be_clickable((By.CLASS_NAME, "product-list__show-more-button"))).click()
+
+        while True:
+
+            cards = browser.find_elements_by_class_name("card-item")
+
+            product_dict = {}
+            timestamp = datetime.now().strftime("%d/%m/%Y %H:%M")
+
+            for card in cards:
+                title_element = card.find_elements_by_class_name("product-title")[0].text
+                price_element = card.find_elements_by_class_name("product-new-price")[0].text
+
+                if price_element.find("\n") != -1:
+                    price_element = price_element.split("\n")[1]
+                    price_int = int(price_element.split(' Ft')[0].replace(' ', ''))
+                    product_dict[title_element] = [price_int, timestamp]
+
+                elif price_element == "csak b2b":
+                    continue
+                elif price_element == "":
+                    continue
+                else:
+                    price_int = int(price_element.split(' Ft')[0].replace(' ', '').replace('.', ''))
+                    product_dict[title_element] = [price_int, timestamp]
+
+
+            elements = browser.find_elements_by_class_name("js-change-page")
+            for element in elements:
+                if element.text == "Következő":
+                    browser.execute_script("arguments[0].click();", element)
+                    time.sleep(3)
+                elif int(element.text):
+                    continue
+                else:
+                    break
+
+        browser.close()
+        print("Scraping done")
+        return product_dict
 
 # TODO: add extra values if available (avaliability, free shipping, discounted)
 # TODO: deal trigger

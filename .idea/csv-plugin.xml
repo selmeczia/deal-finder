@@ -17,6 +17,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\output\Emag_all_VGA.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\output\Ipon_mid_range_VGA.csv">
           <value>
             <Attribute>
