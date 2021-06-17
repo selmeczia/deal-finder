@@ -31,7 +31,7 @@ class DealFinder:
         vars()[df_name] = pd.DataFrame.from_dict(product_dict, orient="index", columns=["Price", "Timestamp"]) \
             .reset_index().rename(columns={"index": "Title"})
         # self.current_df_name = vars()[df_name]
-        print("Dataframe created")
+        print("[", self.current_run_type, "] ", "Dataframe created")
 
         return vars()[df_name]
 
@@ -53,7 +53,7 @@ class DealFinder:
         else:
             df["Latest run"] = 0
 
-        print("Duplicates removed")
+        print("[", self.current_run_type, "] ", "Duplicates removed")
         return df
 
     def rule_checker(self, df):
@@ -75,13 +75,13 @@ class DealFinder:
                     except:
                         continue
         if notification:
-            print(notification)
+            print("[", self.current_run_type, "] ", notification)
 
     def save_df(self, df):
 
         path = self.output_path + self.current_run_type + ".csv"
         df.to_csv(path, index=False, header=True, sep=";")
-        print("Dataframe saved")
+        print("[", self.current_run_type, "] ", "Dataframe saved")
 
     def scrape_handler(self):
         for index, row in self.input_group_df.iterrows():
@@ -112,7 +112,7 @@ class DealFinder:
             time.sleep(2)
             next_page_btn = browser.find_elements_by_class_name("product-list__show-more-button")
             if len(next_page_btn) < 1:
-                print("All pages loaded")
+                print("[", self.current_run_type, "] ", "All pages loaded")
                 break
             else:
                 WebDriverWait(browser, 10) \
@@ -141,7 +141,7 @@ class DealFinder:
                 product_dict[title_element] = [price_int, timestamp]
 
         browser.close()
-        print("Scraping done")
+        print("[", self.current_run_type, "] ", "Scraping done")
         return product_dict
 
     def scrape_Emag_group(self, link):
@@ -149,15 +149,6 @@ class DealFinder:
         browser = webdriver.Chrome(self.chromedriver)
         browser.get(link)
 
-        # while True:
-        #     time.sleep(2)
-        #     next_page_btn = browser.find_elements_by_class_name("js-change-page")
-        #     if len(next_page_btn) < 1:
-        #         print("All pages loaded")
-        #         break
-        #     else:
-        #         WebDriverWait(browser, 10) \
-        #             .until(EC.element_to_be_clickable((By.CLASS_NAME, "product-list__show-more-button"))).click()
 
         while True:
 
@@ -184,18 +175,22 @@ class DealFinder:
                     product_dict[title_element] = [price_int, timestamp]
 
 
+
+
+            text_list = []
             elements = browser.find_elements_by_class_name("js-change-page")
             for element in elements:
-                if element.text == "Következő":
-                    browser.execute_script("arguments[0].click();", element)
-                    time.sleep(3)
-                elif int(element.text):
-                    continue
-                else:
-                    break
+                text_list = element.text
+            if "Következő" in text_list:
+                for element in elements:
+                    if element.text == "Következő":
+                        browser.execute_script("arguments[0].click();", element)
+                        time.sleep(3)
+            else:
+                break
 
         browser.close()
-        print("Scraping done")
+        print("[", self.current_run_type, "] ", "Scraping done")
         return product_dict
 
 # TODO: add extra values if available (avaliability, free shipping, discounted)
