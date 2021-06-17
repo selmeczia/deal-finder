@@ -64,14 +64,17 @@ class DealFinder:
         for index, row in rules_df.iterrows():
             if row["file"] == self.current_run_type:
                 if row["rule"] == "avaliability":
-                    if not to_scan[to_scan["Title no spaces"].str.contains(str(row["item"]))].empty: notification.append(row["item"] + " is avaliable")
+                    if not to_scan[to_scan["Title no spaces"].str.contains(str(row["item"]))].empty:
+                        notification.append(row["item"] + " is avaliable")
                 if "<" in row["rule"]:
                     price_rule = int(row["rule"][1:])
                     items_found = to_scan[to_scan["Title no spaces"].str.contains(str(row["item"]))]
                     try:
                         for item_index, item_row in items_found.iterrows():
                             if int(item_row["Price"]) < price_rule:
-                                notification.append(item_row["Title"] + " is avaliable at price: " + str(item_row["Price"]))
+                                notification.append(item_row["Title"] +
+                                                    " is avaliable at price: " +
+                                                    str(item_row["Price"]))
                     except:
                         continue
         if notification:
@@ -173,9 +176,6 @@ class DealFinder:
                 else:
                     price_int = int(price_element.split(' Ft')[0].replace(' ', '').replace('.', ''))
                     product_dict[title_element] = [price_int, timestamp]
-
-
-
 
             text_list = []
             elements = browser.find_elements_by_class_name("js-change-page")
